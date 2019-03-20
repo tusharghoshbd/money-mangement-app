@@ -1,21 +1,14 @@
 const router = require("express").Router();
 
+const {login, register} = require('./../controllers/userController');
+
 //Registration route
 //localhost:4000/api/users/register
-router.post('/register', (req, res)=>{
-
-
-})
+router.post('/register', register)
 
 //login route
 //localhost:4000/api/users/login
-router.get('/login', (req, res)=>{
-
-    console.log("loging");
-    res.json({
-        message: "loging"
-    })
-})
+router.post('/login', login)
 
 
 module.exports = router;
