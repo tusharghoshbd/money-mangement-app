@@ -1,29 +1,84 @@
 import React, {Component} from 'react'
 import {Link} from 'react-router-dom'
+import { connect } from 'react-redux';
+import Type from '../../stores/actions/Type'
+import { loginAction } from '../../stores/actions/authActions'
 
 class Login extends Component{
+
+    constructor(props){
+        super(props);
+        this.state = {
+            email: '',
+            password: ''
+        }
+        this.changeHandler = this.changeHandler.bind(this);
+        this.submitHandler = this.submitHandler.bind(this);
+    }
+
+    changeHandler = (e)=>{
+        this.setState({
+            [e.target.name]: e.target.value
+        })
+    }
+    submitHandler = (e) => {
+        e.preventDefault();
+        console.log(this.state);
+        let { email, password} = this.state;
+        this.props.loginHandle( { email, password}, this.props.history);
+    }
 
     render(){
         return (
             <div>
-                <form>
+                <form onSubmit={this.submitHandler}>
                     <div className="form-group">
-                        <label for="exampleInputEmail1">Email address</label>
-                        <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" />
+                        <label >Email </label>
+                        <input 
+                            type="email" 
+                            name="email"
+                            className="form-control"  
+                            value={this.state.email}
+                            onChange={this.changeHandler}
+                            placeholder="Enter email" />
                     </div>
                     <div className="form-group">
-                        <label for="exampleInputPassword1">Password</label>
-                        <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password" />
+                        <label>Password</label>
+                        <input 
+                            type="password" 
+                            name="password"
+                            onChange={this.changeHandler}
+                            value={this.state.password}
+                            className="form-control"  
+                            placeholder="Password" />
                     </div>
                     <div className="form-group form-check">
                         {/* <input type="checkbox" className="form-check-input" id="exampleCheck1"> */}
-                        <Link  to="/registration" className="form-check-label" for="exampleCheck1" >Don't have account, please registraion</Link>
+                        <Link  to="/registration" className="form-check-label" >Don't have account, please registraion</Link>
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" className="btn btn-primary">Submit</button>
                 </form>
             </div>
         )
     }
 }
 
-export default Login;
+const mappingDispatchToProps = (dispatch) => {
+    return {
+        loginHandle: (user, history) => {
+            console.log(user);
+            dispatch( loginAction(user, history));
+        }
+    }
+}
+
+const mappingStateToProps = (state) => {
+
+    console.log(state.auth.errors);
+    return {
+        errors: state.auth.errors,
+        message: state.auth.message
+    }
+}
+
+export default connect(mappingStateToProps, mappingDispatchToProps)(Login);
